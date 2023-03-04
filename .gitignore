@@ -1,0 +1,5 @@
+dist
+node_modules
+config.env
+Notes.txt
+object.txt
