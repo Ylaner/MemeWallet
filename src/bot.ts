@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import MongoStorage from "@grammyjs/storage-mongodb";
 import dotenv from "dotenv";
 import express from "express";
 import { Bot, Context, session, SessionFlavor, webhookCallback } from "grammy";
 import { Router } from "@grammyjs/router";
 import { PhotoSize } from "grammy/out/types.node";
 import { Video } from "grammy/out/types.node";
+import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
 //////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -21,6 +21,14 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(DB);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    const sessions = conn.connection.db.collection<ISession>("users");
+
+    bot.use(
+      session({
+        initial: (): SessionData => ({ step: "idle" }),
+        storage: new MongoDBAdapter({ collection: sessions }),
+      })
+    ); // just run for new chats
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -36,15 +44,7 @@ interface SessionData {
 type MyContext = Context & SessionFlavor<SessionData>;
 const bot = new Bot<MyContext>(telegramToken);
 
-const collection =
-  mongoose.connection.db.collection<MongoStorage.ISession>("sessions");
-
-bot.use(
-  session({
-    initial: (): SessionData => ({ step: "idle" }),
-    storage: new MongoStorage.MongoDBAdapter({ collection }),
-  })
-); // just run for new chats
+bot.use(session({ initial: (): SessionData => ({ step: "idle" }) })); // just run for new chats
 
 const router = new Router<MyContext>((ctx) => {
   console.log("router callback function triggerd");
