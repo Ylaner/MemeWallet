@@ -133,6 +133,7 @@ const mainApp = async () => {
     if (process.env.NODE_ENV === "production") {
       // Use Webhooks for the production server
       app.use(express.json());
+      bot.use(router); // register the router
       app.use(webhookCallback(bot, "express"));
       app.listen(PORT, () => {
         console.log(`listening for requests on port: ${PORT}`);
