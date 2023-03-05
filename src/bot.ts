@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import MongoStorage from "@grammyjs/storage-mongodb";
 import dotenv from "dotenv";
 import express from "express";
 import { Bot, Context, session, SessionFlavor, webhookCallback } from "grammy";
@@ -35,7 +36,15 @@ interface SessionData {
 type MyContext = Context & SessionFlavor<SessionData>;
 const bot = new Bot<MyContext>(telegramToken);
 
-bot.use(session({ initial: (): SessionData => ({ step: "idle" }) })); // just run for new chats
+const collection =
+  mongoose.connection.db.collection<MongoStorage.ISession>("sessions");
+
+bot.use(
+  session({
+    initial: (): SessionData => ({ step: "idle" }),
+    storage: new MongoStorage.MongoDBAdapter({ collection }),
+  })
+); // just run for new chats
 
 const router = new Router<MyContext>((ctx) => {
   console.log("router callback function triggerd");
@@ -90,7 +99,7 @@ photo.chatType("private").on(":text", (ctx) => {
   //     height: 719
   //   }
   // ]
-  console.log(ctx.message.chat);
+  console.log(ctx.message.from);
   console.log(ctx.session.photo);
   ctx.session.step = "media";
   //TODO: save it on database
@@ -115,7 +124,7 @@ video.chatType("private").on(":text", (ctx) => {
   //   file_unique_id: 'AgADlg0AAsBWIVA',
   //   file_size: 1303699
   // }
-  console.log(ctx.message.chat);
+  console.log(ctx.message.from);
   console.log(ctx.session.video);
   ctx.session.step = "media";
   //TODO: save it on database
