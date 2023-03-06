@@ -6,6 +6,9 @@ import { Router } from "@grammyjs/router";
 import { PhotoSize } from "grammy/out/types.node";
 import { Video } from "grammy/out/types.node";
 import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
+import { mediaRouter } from "./routers/mediaRouter";
+import { photoRouter } from "./routers/photoRouter";
+import { videoRouter } from "./routers/videoRouter";
 //////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +36,7 @@ const mainApp = async () => {
     const sessions = conn.connection.db.collection<ISession>("session");
     bot.use(
       session({
-        initial: (): SessionData => ({ step: "idle" }),
+        initial: (): SessionData => ({ step: "idle" }), // just run for new chats
         storage: new MongoDBAdapter({ collection: sessions }),
       })
     ); // just run for new chats
@@ -43,85 +46,9 @@ const mainApp = async () => {
       return ctx.session.step;
     });
 
-    const media = router.route("media");
-    media.chatType("private").on(":media", async (ctx) => {
-      console.log("media router triggerd");
-      console.log(ctx.message);
-      const photo = ctx.message.photo;
-      const video = ctx.message.video;
-      if (photo !== undefined) {
-        ctx.session.step = "photo";
-        ctx.session.photo = photo;
-      } else if (video !== undefined) {
-        ctx.session.step = "video";
-        ctx.session.video = video;
-      }
-      await ctx.reply("Now send a index for this");
-    });
-
-    const photo = router.route("photo");
-    photo.chatType("private").on(":text", (ctx) => {
-      // photo: [
-      //   {
-      //     file_id: 'AgACAgEAAxkBAAIC8WQDVxoxH0efxyI64513xckOcj5CAALiqjEbaXIZRBdcY33CxzQ2AQADAgADcwADLgQ',
-      //     file_unique_id: 'AQAD4qoxG2lyGUR4',
-      //     file_size: 953,
-      //     width: 90,
-      //     height: 51
-      //   },
-      //   {
-      //     file_id: 'AgACAgEAAxkBAAIC8WQDVxoxH0efxyI64513xckOcj5CAALiqjEbaXIZRBdcY33CxzQ2AQADAgADbQADLgQ',
-      //     file_unique_id: 'AQAD4qoxG2lyGURy',
-      //     file_size: 13001,
-      //     width: 320,
-      //     height: 180
-      //   },
-      //   {
-      //     file_id: 'AgACAgEAAxkBAAIC8WQDVxoxH0efxyI64513xckOcj5CAALiqjEbaXIZRBdcY33CxzQ2AQADAgADeAADLgQ',
-      //     file_unique_id: 'AQAD4qoxG2lyGUR9',
-      //     file_size: 58049,
-      //     width: 800,
-      //     height: 449
-      //   },
-      //   {
-      //     file_id: 'AgACAgEAAxkBAAIC8WQDVxoxH0efxyI64513xckOcj5CAALiqjEbaXIZRBdcY33CxzQ2AQADAgADeQADLgQ',
-      //     file_unique_id: 'AQAD4qoxG2lyGUR-',
-      //     file_size: 102551,
-      //     width: 1280,
-      //     height: 719
-      //   }
-      // ]
-      console.log(ctx.message.from);
-      console.log(ctx.session.photo);
-      ctx.session.step = "media";
-      //TODO: save it on database
-      ctx.session.photo = undefined;
-    });
-
-    const video = router.route("video");
-    video.chatType("private").on(":text", (ctx) => {
-      // video: {
-      //   duration: 10,
-      //   width: 748,
-      //   height: 854,
-      //   mime_type: 'video/mp4',
-      //   thumb: {
-      //     file_id: 'AAMCBAADGQEAAgMCZAN0DEFqlBZWF3BSil-zZWKpXhcAApYNAALAViFQg3In5oTSfrIBAAdtAAMuBA',
-      //     file_unique_id: 'AQADlg0AAsBWIVBy',
-      //     file_size: 18095,
-      //     width: 280,
-      //     height: 320
-      //   },
-      //   file_id: 'BAACAgQAAxkBAAIDAmQDdAxBapQWVhdwUopfs2ViqV4XAAKWDQACwFYhUINyJ-aE0n6yLgQ',
-      //   file_unique_id: 'AgADlg0AAsBWIVA',
-      //   file_size: 1303699
-      // }
-      console.log(ctx.message.from);
-      console.log(ctx.session.video);
-      ctx.session.step = "media";
-      //TODO: save it on database
-      ctx.session.video = undefined;
-    });
+    mediaRouter(router);
+    photoRouter(router);
+    videoRouter(router);
 
     bot.command("start", async (ctx) => {
       console.log(`${ctx.session.step} from start command`);
