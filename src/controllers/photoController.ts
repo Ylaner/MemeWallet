@@ -1,6 +1,7 @@
+import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
 
-export const photoHandler = function (ctx: MyContext) {
+export const photoHandler = async function (ctx: MyContext) {
   // photo: [
   //   {
   //     file_id: 'AgACAgEAAxkBAAIC8WQDVxoxH0efxyI64513xckOcj5CAALiqjEbaXIZRBdcY33CxzQ2AQADAgADcwADLgQ',
@@ -32,9 +33,24 @@ export const photoHandler = function (ctx: MyContext) {
   //   }
   // ]
   const message = ctx.message!;
-  console.log(message.from);
+  console.log(message.text);
   console.log(ctx.session.photo);
+  const photoUniqueId = ctx.session.photo?.map((photo) => {
+    return photo.file_unique_id;
+  })!;
+  const photoId = ctx.session.photo?.map((photo) => {
+    return photo.file_id;
+  })!;
+  const index = message.text?.split(" ");
+
   ctx.session.step = "media";
   //TODO: save it on database
+  await Media.create({
+    type: "photo",
+    userId: message.from.id,
+    mediaUniqueId: photoUniqueId[0],
+    mediaId: photoId[0],
+    index: index,
+  });
   ctx.session.photo = undefined;
 };

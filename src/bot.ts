@@ -9,17 +9,16 @@ import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
 import { mediaRouter } from "./routers/mediaRouter";
 import { photoRouter } from "./routers/photoRouter";
 import { videoRouter } from "./routers/videoRouter";
-//////////////////////////////////////////////////////////////////////////////////////////
+import { inlineQueriesControll } from "./controllers/inlineQueriesControll";
 
-//////////////////////////////////////////////////////////////////////////////////////////
 dotenv.config({ path: "./config.env" });
 const app = express();
 const PORT = process.env.PORT || 8443;
 const telegramToken = process.env.TELEGRAM_API_TOKEN!;
 const envDatabase = process.env.DATABASE!;
 const DB = envDatabase;
-
 mongoose.set("strictQuery", true);
+
 const mainApp = async () => {
   try {
     const conn = await mongoose.connect(DB);
@@ -32,6 +31,7 @@ const mainApp = async () => {
     }
     type MyContext = Context & SessionFlavor<SessionData>;
     const bot = new Bot<MyContext>(telegramToken);
+    bot.on("inline_query", async (ctx) => inlineQueriesControll(ctx));
 
     const sessions = conn.connection.db.collection<ISession>("session");
     bot.use(
@@ -72,7 +72,6 @@ const mainApp = async () => {
     }
   } catch (error) {
     console.log(error);
-    process.exit(1);
   }
 };
 
