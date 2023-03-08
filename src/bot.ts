@@ -39,12 +39,16 @@ const mainApp = async () => {
         //Task 1 - Just for groups
         const message = ctx.message!;
         if (message.chat.type === "private") {
-          await ctx.reply("This commend is only for the groups.");
+          await ctx.reply("This commend is only for the groups.", {
+            reply_to_message_id: ctx.message?.message_id,
+          });
           return;
         }
         //Task 2 - Check the user reply on message
         if (!message.reply_to_message) {
-          await ctx.reply("Please reply on a media.");
+          await ctx.reply("Please reply on a media.", {
+            reply_to_message_id: ctx.message?.message_id,
+          });
           return;
         }
         //Task 3 - Check the user reply on a media suppurted

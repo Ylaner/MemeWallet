@@ -46,12 +46,15 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
       //   );
       // }
     });
-
-    await ctx.answerInlineQuery(replyMedias, {
+    const option: any = {
       cache_time: 10,
       is_personal: true,
-      // next_offset: true,
-    });
+      next_offset: "next",
+    };
+    if (!replyMedias)
+      option.switch_pm_text = "No result found. Start a bot for saving a media";
+
+    await ctx.answerInlineQuery(replyMedias, option);
   } catch (err) {
     console.error(err);
   }
