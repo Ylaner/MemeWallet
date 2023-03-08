@@ -51,8 +51,10 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
       is_personal: true,
       // next_offset: "next",
     };
-    if (!replyMedias[0])
+    if (!replyMedias[0]) {
       option.switch_pm_text = "No result found. Start a bot for saving a media";
+      option.switch_pm_parameter = "ridam";
+    }
     console.log(`option: ${option}`);
     await ctx.answerInlineQuery(replyMedias, option);
   } catch (err) {
