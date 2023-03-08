@@ -49,9 +49,9 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
     const option: any = {
       cache_time: 10,
       is_personal: true,
-      next_offset: "next",
+      // next_offset: "next",
     };
-    if (!replyMedias)
+    if (!replyMedias[0])
       option.switch_pm_text = "No result found. Start a bot for saving a media";
 
     await ctx.answerInlineQuery(replyMedias, option);
