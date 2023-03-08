@@ -18,4 +18,10 @@ export const createOne = async function (
   });
   ctx.session.step = "media";
   ctx.session.media = undefined;
+  await ctx.reply(
+    "Done, You can find it via inline method @MemeWallet_bot 'your index' ",
+    {
+      reply_to_message_id: ctx.message?.message_id,
+    }
+  );
 };
