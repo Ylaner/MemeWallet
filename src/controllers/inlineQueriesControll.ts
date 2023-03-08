@@ -53,7 +53,7 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
     };
     if (!replyMedias[0])
       option.switch_pm_text = "No result found. Start a bot for saving a media";
-    console.log(option);
+    console.log(`option: ${option}`);
     await ctx.answerInlineQuery(replyMedias, option);
   } catch (err) {
     console.error(err);
