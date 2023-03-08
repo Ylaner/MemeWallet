@@ -34,11 +34,11 @@ export const photoHandler = async function (ctx: MyContext) {
   // ]
   const message = ctx.message!;
   console.log(message.text);
-  console.log(ctx.session.photo);
-  const photoUniqueId = ctx.session.photo?.map((photo) => {
+  console.log(ctx.session.media);
+  const photoUniqueId = ctx.session.media?.map((photo: any) => {
     return photo.file_unique_id;
   })!;
-  const photoId = ctx.session.photo?.map((photo) => {
+  const photoId = ctx.session.media?.map((photo: any) => {
     return photo.file_id;
   })!;
   const index = message.text?.split(" ");
@@ -52,5 +52,5 @@ export const photoHandler = async function (ctx: MyContext) {
     mediaId: photoId[0],
     index: index,
   });
-  ctx.session.photo = undefined;
+  ctx.session.media = undefined;
 };

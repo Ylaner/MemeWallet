@@ -1,6 +1,8 @@
 import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
 import { VideoClass } from "../utils/videoClass";
+import { Video_noteClass } from "../utils/video_noteClass";
+import { VoiceClass } from "../utils/voiceClass";
 
 export const inlineQueriesControll = async function (ctx: MyContext) {
   try {
@@ -9,22 +11,40 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
     const query = ctx.update.inline_query?.query!;
 
     const arrayOfQuery = query.toLowerCase().split(" ");
-    const Medias = await Media.find({
+    console.log(arrayOfQuery, ctx.update.inline_query?.from.id);
+    const medias = await Media.find({
       index: { $all: arrayOfQuery },
       userId: ctx.update.inline_query?.from.id,
     });
+    console.log(medias);
 
     let i = 0;
-    const replyMedias: any = Medias.map((media: any) => {
+    const replyMedias: any = medias.map((media: any) => {
       i++;
       if (media.type === "video") {
         return new VideoClass(
           `Video ${i}`,
-          media.index[0].charAt(0).toUpperCase() + media.index[0].slice(1),
+          media.index.join(" "),
           media.index.join(" "),
           media.mediaId
         );
       }
+      if (media.type === "voice") {
+        return new VoiceClass(
+          `Voice ${i}`,
+          media.index.join(" "),
+          media.index.join(" "),
+          media.mediaId
+        );
+      }
+      // if (media.type === "video_note") {
+      //   return new Video_noteClass(
+      //     `Video_note ${i}`,
+      //     media.index.join(" "),
+      //     media.index.join(" "),
+      //     media.mediaId
+      //   );
+      // }
     });
 
     await ctx.answerInlineQuery(replyMedias, {

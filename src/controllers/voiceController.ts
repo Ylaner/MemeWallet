@@ -2,6 +2,6 @@ import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
 import { createOne } from "./handlerFactory";
 
-export const videoHandler = async function (ctx: MyContext) {
-  await createOne(ctx, Media, "video");
+export const voiceHandler = async function (ctx: MyContext) {
+  await createOne(ctx, Media, "voice");
 };

@@ -6,5 +6,8 @@ export const mediaRouter = function (router: Router<MyContext>) {
   const media = router.route("media");
   media
     .chatType("private")
-    .on(":media", async (ctx) => await mediaHandler(ctx));
+    .on(
+      [":media", ":voice", ":video_note"],
+      async (ctx) => await mediaHandler(ctx)
+    );
 };

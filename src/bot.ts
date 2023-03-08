@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 import express from "express";
 import { Bot, Context, session, SessionFlavor, webhookCallback } from "grammy";
 import { Router } from "@grammyjs/router";
-import { PhotoSize } from "grammy/out/types.node";
-import { Video } from "grammy/out/types.node";
 import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
 import { mediaRouter } from "./routers/mediaRouter";
 import { photoRouter } from "./routers/photoRouter";
 import { videoRouter } from "./routers/videoRouter";
 import { inlineQueriesControll } from "./controllers/inlineQueriesControll";
+import { MyContext, SessionData } from "./utils/myContextType";
+import { voiceRouter } from "./routers/voiceRouter";
+import { video_noteRouter } from "./routers/video_noteRouter";
 
 dotenv.config({ path: "./config.env" });
 const app = express();
@@ -23,13 +24,7 @@ const mainApp = async () => {
   try {
     const conn = await mongoose.connect(DB);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
-    interface SessionData {
-      step: "idle" | "media" | "photo" | "video" | "edit"; // which step of the form we are on
-      user?: number; //TODO: make user class
-      photo?: PhotoSize[]; //TODO: make photo class
-      video?: Video;
-    }
-    type MyContext = Context & SessionFlavor<SessionData>;
+
     const bot = new Bot<MyContext>(telegramToken);
     bot.on("inline_query", async (ctx) => inlineQueriesControll(ctx));
 
@@ -45,10 +40,11 @@ const mainApp = async () => {
       console.log("router callback function triggerd");
       return ctx.session.step;
     });
-
     mediaRouter(router);
     photoRouter(router);
     videoRouter(router);
+    voiceRouter(router);
+    video_noteRouter(router);
 
     bot.command("start", async (ctx) => {
       console.log(`${ctx.session.step} from start command`);
