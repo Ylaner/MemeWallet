@@ -28,11 +28,6 @@ const mainApp = async () => {
 
     const bot = new Bot<MyContext>(telegramToken);
     bot.on("inline_query", async (ctx) => inlineQueriesControll(ctx));
-    bot.command("start", async (ctx) => {
-      console.log(`${ctx.session.step} from start command`);
-      ctx.session.step = "media";
-      await ctx.reply("Hello");
-    });
 
     bot.command("add", async (ctx) => {
       try {
@@ -115,6 +110,12 @@ const mainApp = async () => {
     videoRouter(router);
     voiceRouter(router);
     video_noteRouter(router);
+
+    bot.command("start", async (ctx) => {
+      console.log(`${ctx.session.step} from start command`);
+      ctx.session.step = "media";
+      await ctx.reply("Hello");
+    });
 
     // Start the bot.
     if (process.env.NODE_ENV === "production") {
