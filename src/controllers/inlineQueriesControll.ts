@@ -11,9 +11,10 @@ export const inlineQueriesControll = async function (ctx: MyContext) {
     const query = ctx.update.inline_query?.query!;
 
     const arrayOfQuery = query
-      .toLowerCase()
+      ?.toLowerCase()
       .replace(/(\r\n|\n|\r)/gm, " ")
-      .split(" ");
+      .split(" ")
+      .filter((string) => string !== "");
     console.log(arrayOfQuery, ctx.update.inline_query?.from.id);
     const medias = await Media.find({
       index: { $all: arrayOfQuery },
