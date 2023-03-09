@@ -72,7 +72,12 @@ const mainApp = async () => {
         }
         //Task 4 - Check the user enter a valid key
         let index;
-        index = message.text.split("/add ")[1]?.split(" ");
+        index = message.text
+          .split("/add ")[1]
+          ?.toLowerCase()
+          .replace(/(\r\n|\n|\r)/gm, " ")
+          .split(" ")
+          .filter((string) => string !== "");
         if (!index) {
           await ctx.reply("please send your index after /add");
           return;
