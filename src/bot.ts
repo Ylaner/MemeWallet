@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
-import { Bot, Context, session, SessionFlavor, webhookCallback } from "grammy";
+import { Bot, session, webhookCallback } from "grammy";
 import { Router } from "@grammyjs/router";
 import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
 import { mediaRouter } from "./routers/mediaRouter";

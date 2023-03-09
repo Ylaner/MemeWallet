@@ -5,6 +5,7 @@ export const createOne = async function (
   Model: any,
   type: string
 ) {
+  try{
   const message = ctx.message!;
   console.log(ctx.session.media);
   const index = message.text?.toLowerCase().split(" ");
@@ -19,9 +20,12 @@ export const createOne = async function (
   ctx.session.step = "media";
   ctx.session.media = undefined;
   await ctx.reply(
-    "Done, You can find it via inline method @MemeWallet_bot 'your index' ",
+    `Done, You can find it via inline method @MemeWallet_bot ${index}` ,
     {
       reply_to_message_id: ctx.message?.message_id,
     }
   );
+  }catch(err) {
+    console.log(err);
+  }
 };

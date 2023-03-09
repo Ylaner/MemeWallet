@@ -3,5 +3,9 @@ import { MyContext } from "../utils/myContextType";
 import { createOne } from "./handlerFactory";
 
 export const voiceHandler = async function (ctx: MyContext) {
-  await createOne(ctx, Media, "voice");
+  try {
+    await createOne(ctx, Media, "voice");
+  } catch (err) {
+    console.log(err);
+  }
 };
