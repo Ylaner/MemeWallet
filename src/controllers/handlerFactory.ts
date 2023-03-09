@@ -8,7 +8,7 @@ export const createOne = async function (
   try{
   const message = ctx.message!;
   console.log(ctx.session.media);
-  const index = message.text?.toLowerCase().split(" ");
+  const index = message.text?.toLowerCase().replace(/(\r\n|\n|\r)/gm, " ").split(" ");
 
   await Model.create({
     type: type,
