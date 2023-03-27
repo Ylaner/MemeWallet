@@ -28,7 +28,13 @@ const mainApp = async () => {
 
     const bot = new Bot<MyContext>(telegramToken);
     bot.on("inline_query", async (ctx) => inlineQueriesControl(ctx));
-
+    await bot.api.setMyCommands([
+      { command: "start", description: "Start the bot" },
+      { command: "help", description: "Show help text" },
+      { command: "add", description: "add a new media only for groups" },
+      { command: "delete", description: "delete the target media" },
+      { command: "cancel", description: "cancel the current operation" },
+    ]);
     bot.command("add", async (ctx) => {
       try {
         //Task 1 - Just for groups
@@ -46,7 +52,7 @@ const mainApp = async () => {
           });
           return;
         }
-        //Task 3 - Check the user reply on a media suppurted
+        //Task 3 - Check the user reply on a media supported
         const photo = message.reply_to_message.photo;
         const video = message.reply_to_message.video;
         const voice = message.reply_to_message.voice;
