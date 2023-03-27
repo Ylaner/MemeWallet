@@ -1,5 +1,5 @@
 import { Router } from "@grammyjs/router";
-import { videoHandler } from "../controllers/videoController";
+import { videoHandler } from "../controllers/videoControl";
 import { MyContext } from "../utils/myContextType";
 
 export const videoRouter = function (router: Router<MyContext>) {

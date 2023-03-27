@@ -1,5 +1,5 @@
 import { Router } from "@grammyjs/router";
-import { mediaHandler } from "../controllers/mediaController";
+import { mediaHandler } from "../controllers/mediaControl";
 import { MyContext } from "../utils/myContextType";
 
 export const mediaRouter = function (router: Router<MyContext>) {

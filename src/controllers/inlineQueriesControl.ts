@@ -4,9 +4,9 @@ import { VideoClass } from "../utils/videoClass";
 import { Video_noteClass } from "../utils/video_noteClass";
 import { VoiceClass } from "../utils/voiceClass";
 
-export const inlineQueriesControll = async function (ctx: MyContext) {
+export const inlineQueriesControl = async function (ctx: MyContext) {
   try {
-    console.log("inlineQueriesControll triggerd");
+    console.log("inlineQueriesControl triggered");
 
     const query = ctx.update.inline_query?.query!;
 

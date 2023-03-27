@@ -1,5 +1,5 @@
 import { Router } from "@grammyjs/router";
-import { videoHandler } from "../controllers/videoController";
+import { videoHandler } from "../controllers/videoControl";
 import { video_noteHandler } from "../controllers/viedo_noteControll";
 import { MyContext } from "../utils/myContextType";
 

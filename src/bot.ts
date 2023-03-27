@@ -7,7 +7,7 @@ import { MongoDBAdapter, ISession } from "@grammyjs/storage-mongodb";
 import { mediaRouter } from "./routers/mediaRouter";
 import { photoRouter } from "./routers/photoRouter";
 import { videoRouter } from "./routers/videoRouter";
-import { inlineQueriesControll } from "./controllers/inlineQueriesControll";
+import { inlineQueriesControl } from "./controllers/inlineQueriesControl";
 import { MyContext, SessionData } from "./utils/myContextType";
 import { voiceRouter } from "./routers/voiceRouter";
 import { video_noteRouter } from "./routers/video_noteRouter";
@@ -27,7 +27,7 @@ const mainApp = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
 
     const bot = new Bot<MyContext>(telegramToken);
-    bot.on("inline_query", async (ctx) => inlineQueriesControll(ctx));
+    bot.on("inline_query", async (ctx) => inlineQueriesControl(ctx));
 
     bot.command("add", async (ctx) => {
       try {
@@ -54,7 +54,7 @@ const mainApp = async () => {
         let type;
         let media;
         if (photo !== undefined) {
-          await ctx.reply("curently photos are not supported...", {
+          await ctx.reply("currently photos are not supported...", {
             reply_to_message_id: ctx.message?.message_id,
           });
           return;
@@ -65,7 +65,7 @@ const mainApp = async () => {
           type = "voice";
           media = voice;
         } else if (video_note !== undefined) {
-          await ctx.reply("curently video messages are not supported...", {
+          await ctx.reply("currently video messages are not supported...", {
             reply_to_message_id: ctx.message?.message_id,
           });
           return;
@@ -106,7 +106,7 @@ const mainApp = async () => {
     ); // just run for new chats
 
     const router = new Router<MyContext>((ctx) => {
-      console.log("router callback function triggerd");
+      console.log("router callback function triggered");
       return ctx.session.step;
     });
 
@@ -114,7 +114,7 @@ const mainApp = async () => {
     photoRouter(router);
     videoRouter(router);
     voiceRouter(router);
-    video_noteRouter(router);
+    video_noteRouter(router); // video messages
 
     bot.command("start", async (ctx) => {
       console.log(`${ctx.session.step} from start command`);

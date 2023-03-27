@@ -1,5 +1,5 @@
 import { Router } from "@grammyjs/router";
-import { photoHandler } from "../controllers/photoController";
+import { photoHandler } from "../controllers/photoControl";
 import { MyContext } from "../utils/myContextType";
 
 export const photoRouter = function (router: Router<MyContext>) {
