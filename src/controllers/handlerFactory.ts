@@ -76,7 +76,7 @@ export const clearSession = (ctx: MyContext) => {
 
 export const helpMessagePrivate = async (ctx: MyContext) => {
   await ctx.reply(
-    "You can save your videos and voices to the bot and access it later through the inline method like this: '@MemeWallet_bot {your index}' "
+    "You can save your videos and voices to the bot and access it later through the inline method like this: '@MemeWallet_bot {your index}', send your video or voice first"
   );
 };
 
