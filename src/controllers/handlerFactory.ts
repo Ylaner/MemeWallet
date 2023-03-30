@@ -82,6 +82,6 @@ export const helpMessagePrivate = async (ctx: MyContext) => {
 
 export const helpMessageGroup = async (ctx: MyContext) => {
   await ctx.reply(
-    "Reply '/add your index' to the media you want to saved(Video and Voice message) to save it on the bot and use inline method @MemeWallet_bot to access it later"
+    "Reply '/add your index' to the media you want to saved(Video and Voice message) to save it on the bot and use inline method @MemeWallet_bot to access it later. Don't forget i must be ADMIN to work properly"
   );
 };
