@@ -1,4 +1,7 @@
+import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
+import { editControl } from "./editControl";
+import { findOne } from "./handlerFactory";
 
 export const mediaHandler = async (ctx: MyContext) => {
   try {
@@ -8,6 +11,13 @@ export const mediaHandler = async (ctx: MyContext) => {
     const video = message.video;
     const voice = message.voice;
     const video_note = message.video_note;
+
+    //edit delete duplicate control
+    const mediaUniqueId = video?.file_unique_id || voice?.file_unique_id;
+    const mediaOnDatabase = await findOne(mediaUniqueId, Media);
+    await editControl(ctx, mediaOnDatabase);
+    if (mediaOnDatabase) return;
+
     if (photo !== undefined) {
       await ctx.reply("currently photos are not supported...");
       return;

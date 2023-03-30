@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
 
 export const createOne = async function (
@@ -24,7 +26,9 @@ export const createOne = async function (
     ctx.session.step = "media";
     ctx.session.media = undefined;
     await ctx.reply(
-      `Done, You can find it via inline method @MemeWallet_bot ${index}`,
+      `Done, You can find it via inline method @MemeWallet_bot ${index?.join(
+        " "
+      )}`,
       {
         reply_to_message_id: ctx.message?.message_id,
       }
@@ -32,4 +36,52 @@ export const createOne = async function (
   } catch (err) {
     console.log(err);
   }
+};
+
+export const findOne = async (id: string | undefined, Model: any) => {
+  try {
+    const query = await Model.findOne({
+      mediaUniqueId: id,
+    });
+    return query;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deleteOne = async (filter: object, Model: any) => {
+  try {
+    await Model.deleteOne(filter);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateOne = async (filter: object, data: any, Model: any) => {
+  try {
+    const updatedData = await Model.findOneAndUpdate(filter, data, {
+      new: true,
+      runValidators: true,
+    });
+    console.log(updatedData);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const clearSession = (ctx: MyContext) => {
+  ctx.session.step = "media";
+  ctx.session.media = null;
+};
+
+export const helpMessagePrivate = async (ctx: MyContext) => {
+  await ctx.reply(
+    "You can save your videos and voices to the bot and access it later through the inline method like this: '@MemeWallet_bot {your index}' "
+  );
+};
+
+export const helpMessageGroup = async (ctx: MyContext) => {
+  await ctx.reply(
+    "Reply '/add your index' to the media you want to saved(Video and Voice message) to save it on the bot and use inline method @MemeWallet_bot to access it later"
+  );
 };

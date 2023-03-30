@@ -1,7 +1,7 @@
 import { Media } from "../models/mediaModel";
 import { MyContext } from "../utils/myContextType";
 import { VideoClass } from "../utils/videoClass";
-import { Video_noteClass } from "../utils/video_noteClass";
+// import { Video_noteClass } from "../utils/video_noteClass";
 import { VoiceClass } from "../utils/voiceClass";
 
 export const inlineQueriesControl = async function (ctx: MyContext) {
@@ -57,7 +57,7 @@ export const inlineQueriesControl = async function (ctx: MyContext) {
     };
     if (!replyMedias[0]) {
       option.switch_pm_text = "No result found. Start a bot for saving a media";
-      option.switch_pm_parameter = "ridam";
+      option.switch_pm_parameter = "-";
     }
     console.log(`option: ${option}`);
     await ctx.answerInlineQuery(replyMedias, option);

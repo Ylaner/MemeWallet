@@ -11,7 +11,14 @@ import { inlineQueriesControl } from "./controllers/inlineQueriesControl";
 import { MyContext, SessionData } from "./utils/myContextType";
 import { voiceRouter } from "./routers/voiceRouter";
 import { video_noteRouter } from "./routers/video_noteRouter";
-import { Media } from "./models/mediaModel";
+import { editRouter } from "./routers/editRouter";
+import {
+  addControl,
+  cancelControl,
+  deleteControl,
+  startControl,
+} from "./controllers/commandControl";
+import { helpMessageGroup } from "./controllers/handlerFactory";
 
 dotenv.config({ path: "./config.env" });
 const app = express();
@@ -30,79 +37,15 @@ const mainApp = async () => {
     bot.on("inline_query", async (ctx) => inlineQueriesControl(ctx));
     await bot.api.setMyCommands([
       { command: "start", description: "Start the bot" },
-      { command: "help", description: "Show help text" },
+      { command: "help", description: "Show the help text" },
       { command: "add", description: "add a new media only for groups" },
       { command: "delete", description: "delete the target media" },
       { command: "cancel", description: "cancel the current operation" },
     ]);
-    bot.command("add", async (ctx) => {
-      try {
-        //Task 1 - Just for groups
-        const message = ctx.message!;
-        if (message.chat.type === "private") {
-          await ctx.reply("This commend is only for the groups.", {
-            reply_to_message_id: ctx.message?.message_id,
-          });
-          return;
-        }
-        //Task 2 - Check the user reply on message
-        if (!message.reply_to_message) {
-          await ctx.reply("Please reply on a media.", {
-            reply_to_message_id: ctx.message?.message_id,
-          });
-          return;
-        }
-        //Task 3 - Check the user reply on a media supported
-        const photo = message.reply_to_message.photo;
-        const video = message.reply_to_message.video;
-        const voice = message.reply_to_message.voice;
-        const video_note = message.reply_to_message.video_note;
-        let type;
-        let media;
-        if (photo !== undefined) {
-          await ctx.reply("currently photos are not supported...", {
-            reply_to_message_id: ctx.message?.message_id,
-          });
-          return;
-        } else if (video !== undefined) {
-          type = "video";
-          media = video;
-        } else if (voice !== undefined) {
-          type = "voice";
-          media = voice;
-        } else if (video_note !== undefined) {
-          await ctx.reply("currently video messages are not supported...", {
-            reply_to_message_id: ctx.message?.message_id,
-          });
-          return;
-        }
-        //Task 4 - Check the user enter a valid key
-        let index;
-        index = message.text
-          .split("/add ")[1]
-          ?.toLowerCase()
-          .replace(/(\r\n|\n|\r)/gm, " ")
-          .split(" ")
-          .filter((string) => string !== "");
-        if (!index) {
-          await ctx.reply("please send your index after /add");
-          return;
-        }
-        //Task 5 - Save the media on database
-        await Media.create({
-          type: type,
-          userId: message.from.id,
-          mediaUniqueId: media?.file_unique_id,
-          mediaId: media?.file_id,
-          index: index,
-        });
-        await ctx.reply("Done", {
-          reply_to_message_id: ctx.message?.message_id,
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    });
+
+    bot.on(":new_chat_members:me", async (ctx) => helpMessageGroup(ctx));
+    bot.command("add", async (ctx) => await addControl(ctx));
+
     const sessions = conn.connection.db.collection<ISession>("session");
     bot.use(
       session({
@@ -110,9 +53,18 @@ const mainApp = async () => {
         storage: new MongoDBAdapter({ collection: sessions }),
       })
     ); // just run for new chats
+    bot.command("start", async (ctx) => await startControl(ctx));
+
+    bot
+      .chatType("private")
+      .command("cancel", async (ctx: MyContext) => await cancelControl(ctx));
+    bot
+      .chatType("private")
+      .command("delete", async (ctx: MyContext) => await deleteControl(ctx));
 
     const router = new Router<MyContext>((ctx) => {
       console.log("router callback function triggered");
+      console.log(ctx);
       return ctx.session.step;
     });
 
@@ -121,12 +73,7 @@ const mainApp = async () => {
     videoRouter(router);
     voiceRouter(router);
     video_noteRouter(router); // video messages
-
-    bot.command("start", async (ctx) => {
-      console.log(`${ctx.session.step} from start command`);
-      ctx.session.step = "media";
-      await ctx.reply("Hello");
-    });
+    editRouter(router);
 
     // Start the bot.
     if (process.env.NODE_ENV === "production") {
