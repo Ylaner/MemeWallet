@@ -16,6 +16,8 @@ import {
   addControl,
   cancelControl,
   deleteControl,
+  helpControlGroups,
+  helpControlPrivate,
   startControl,
 } from "./controllers/commandControl";
 import { helpMessageGroup } from "./controllers/handlerFactory";
@@ -44,7 +46,13 @@ const mainApp = async () => {
     ]);
 
     bot.on(":new_chat_members:me", async (ctx) => helpMessageGroup(ctx));
-    bot.command("add", async (ctx) => await addControl(ctx));
+    bot.command("add", async (ctx: MyContext) => await addControl(ctx));
+    bot
+      .chatType("private")
+      .command("help", async (ctx: MyContext) => await helpControlPrivate(ctx));
+    bot
+      .chatType("group")
+      .command("help", async (ctx: MyContext) => await helpControlGroups(ctx));
 
     const sessions = conn.connection.db.collection<ISession>("session");
     bot.use(
@@ -64,7 +72,6 @@ const mainApp = async () => {
 
     const router = new Router<MyContext>((ctx) => {
       console.log("router callback function triggered");
-      console.log(ctx);
       return ctx.session.step;
     });
 
