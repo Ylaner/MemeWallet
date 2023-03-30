@@ -1,7 +1,5 @@
 import { Media } from "../models/mediaModel";
-import { MediaClass } from "../utils/mediaClass";
 import { MyContext } from "../utils/myContextType";
-import { VideoClass } from "../utils/videoClass";
 import { clearSession, findOne, updateOne } from "./handlerFactory";
 
 export const editHandler = async (ctx: MyContext) => {

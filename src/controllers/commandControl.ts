@@ -35,10 +35,13 @@ export const addControl = async (ctx: MyContext) => {
     const mediaUniqueId = video?.file_unique_id || voice?.file_unique_id;
     const mediaOnDatabase = await findOne(mediaUniqueId, Media);
     if (mediaOnDatabase) {
-      ctx.reply(
+      await ctx.reply(
         `You saved this media before with this index: ${mediaOnDatabase.index.join(
           " "
-        )} You can edit or delete this media in the bot`
+        )} You can edit or delete this media in the bot`,
+        {
+          reply_to_message_id: ctx.message?.message_id,
+        }
       );
       return;
     }
@@ -69,7 +72,9 @@ export const addControl = async (ctx: MyContext) => {
       .split(" ")
       .filter((string) => string !== "");
     if (!index) {
-      await ctx.reply("please send your index after /add");
+      await ctx.reply("please send your index after /add", {
+        reply_to_message_id: ctx.message?.message_id,
+      });
       return;
     }
     //Task 5 - Save the media on database
