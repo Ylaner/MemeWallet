@@ -14,7 +14,10 @@ export const mediaHandler = async (ctx: MyContext) => {
 
     //edit delete duplicate control
     const mediaUniqueId = video?.file_unique_id || voice?.file_unique_id;
-    const mediaOnDatabase = await findOne(mediaUniqueId, Media);
+    const mediaOnDatabase = await findOne(
+      { mediaUniqueId, userId: ctx.from?.id },
+      Media
+    );
     await editControl(ctx, mediaOnDatabase);
     if (mediaOnDatabase) return;
 

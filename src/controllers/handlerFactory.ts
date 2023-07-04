@@ -38,11 +38,9 @@ export const createOne = async function (
   }
 };
 
-export const findOne = async (id: string | undefined, Model: any) => {
+export const findOne = async (filter: object, Model: any) => {
   try {
-    const query = await Model.findOne({
-      mediaUniqueId: id,
-    });
+    const query = await Model.findOne(filter);
     return query;
   } catch (err) {
     console.log(err);
