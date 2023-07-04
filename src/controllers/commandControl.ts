@@ -36,7 +36,7 @@ export const addControl = async (ctx: MyContext) => {
     const mediaOnDatabase = await findOne(mediaUniqueId, Media);
     console.log(`🛑⛔⛔ ${mediaOnDatabase} va ${ctx.from?.id}🛑⛔⛔`);
 
-    if (mediaOnDatabase) {
+    if (mediaOnDatabase?.userId === ctx.from?.id) {
       await ctx.reply(
         `You saved this media before with this index: ${mediaOnDatabase.index.join(
           " "
