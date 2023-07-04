@@ -34,7 +34,7 @@ export const addControl = async (ctx: MyContext) => {
     let media;
     const mediaUniqueId = video?.file_unique_id || voice?.file_unique_id;
     const mediaOnDatabase = await findOne(mediaUniqueId, Media);
-    if (mediaOnDatabase) {
+    if (mediaOnDatabase.userId === ctx.from?.id) {
       await ctx.reply(
         `You saved this media before with this index: ${mediaOnDatabase.index.join(
           " "
